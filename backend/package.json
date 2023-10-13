@@ -15,8 +15,5 @@
   "bugs": {
     "url": "https://github.com/sam-cutter/back-market-spy/issues"
   },
-  "homepage": "https://github.com/sam-cutter/back-market-spy#readme",
-  "dependencies": {
-    "puppeteer": "^21.3.8"
-  }
+  "homepage": "https://github.com/sam-cutter/back-market-spy#readme"
 }
