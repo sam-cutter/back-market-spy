@@ -7,7 +7,7 @@ async function get_product_price(url) {
 
   try {
     const price_elements = await page.$x(
-      '//*[@id="__layout"]/div/div[2]/div[2]/div/div[3]/div/div/div[2]/div/div/div[1]/div[2]/div[1]/div/div/div/div[2]/h2/div/div[1]'
+      '//*[@id="__layout"]/div/div[2]/div[2]/div/div[4]/div/div/div[2]/div/div/div[1]/div[2]/div[1]/div/div/div/div[2]/h2/div/div[1]'
     );
 
     if (price_elements.length > 0) {
