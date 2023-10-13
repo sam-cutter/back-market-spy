@@ -64,6 +64,8 @@ async function get_product_price(product_id, condition) {
 
     if (product_item) {
       return product_item.price.amount;
+    } else {
+      throw new Error(`Product price not found.`);
     }
   } catch (error) {
     console.error(error);
