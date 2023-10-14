@@ -1,6 +1,6 @@
 import PocketBase from "pocketbase";
 import "dotenv/config";
-import { get_product_slug } from "./back_market.js";
+import { get_product_slug, get_product_price } from "./back_market.js";
 
 export async function init_pocketbase() {
   const pb = new PocketBase("http://127.0.0.1:8090");
@@ -38,4 +38,25 @@ export async function add_tracked_product(product_bm_uuid) {
     .create(product_data);
 
   return tracked_product_record.id;
+}
+
+export async function add_product_snapshot(
+  product_bm_uuid,
+  product_record_id,
+  product_condition
+) {
+  const pb = await init_pocketbase();
+
+  const product_snapshot_data = {
+    product: product_record_id,
+    condition: product_condition,
+    in_stock: true,
+    price_gbp: await get_product_price(product_bm_uuid, product_condition),
+  };
+
+  const product_snapshot_record = await pb
+    .collection("product_snapshots")
+    .create(product_snapshot_data);
+
+  return product_snapshot_record.id;
 }
