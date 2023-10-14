@@ -18,6 +18,23 @@ export function extract_product_uuid(product_url_string) {
   }
 }
 
+export function extract_product_condition(product_url_string) {
+  try {
+    const product_url = new URL(product_url_string);
+    const product_url_hash = product_url.hash;
+
+    const product_url_condition_match = product_url_hash.match(/#l=(\d+)/);
+
+    if (product_url_condition_match && product_url_condition_match[1]) {
+      return parseInt(product_url_condition_match[1]);
+    } else {
+      return product_condition_options.Fair();
+    }
+  } catch (error) {
+    return "Invalid product URL.";
+  }
+}
+
 export const product_condition_options = {
   Fair: 12,
   Good: 11,
