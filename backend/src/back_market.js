@@ -1,4 +1,4 @@
-export function extract_product_id(product_url_string) {
+export function extract_product_uuid(product_url_string) {
   try {
     const product_url = new URL(product_url_string);
     const product_url_path_segments = product_url.pathname.split("/");
@@ -24,8 +24,8 @@ export const product_condition_options = {
   Excellent: 10,
 };
 
-export async function get_product_price(product_id, condition) {
-  const product_request_url = `https://www.backmarket.co.uk/bm/product/${product_id}/pickers`;
+export async function get_product_price(product_uuid, condition) {
+  const product_request_url = `https://www.backmarket.co.uk/bm/product/${product_uuid}/pickers`;
 
   const product_request_headers = new Headers({
     "Accept-Language": "en-gb",
@@ -72,8 +72,8 @@ export async function get_product_price(product_id, condition) {
   }
 }
 
-export async function get_product_slug(product_id) {
-  const product_request_url = `https://www.backmarket.co.uk/bm/product/${product_id}/pickers`;
+export async function get_product_slug(product_uuid) {
+  const product_request_url = `https://www.backmarket.co.uk/bm/product/${product_uuid}/pickers`;
 
   const product_request_headers = new Headers({
     "Accept-Language": "en-gb",

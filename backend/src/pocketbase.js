@@ -25,12 +25,12 @@ export async function get_tracked_products() {
   return tracked_products;
 }
 
-export async function add_tracked_product(product_id) {
+export async function add_tracked_product(product_uuid) {
   const pb = await init_pocketbase();
 
   const product_data = {
-    pb_uuid: product_id,
-    slug: await get_product_slug(product_id),
+    pb_uuid: product_uuid,
+    slug: await get_product_slug(product_uuid),
   };
 
   const tracked_product_record = await pb
