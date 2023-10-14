@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Track the prices of a set of products on the Back Market website, and be notified when the price drops below a certain threshold.",
   "main": "./src/index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
