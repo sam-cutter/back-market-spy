@@ -11,3 +11,15 @@ export async function init_pocketbase() {
 
   return pb;
 }
+
+export async function get_tracked_products() {
+  const pb = await init_pocketbase();
+
+  const tracked_products = (
+    await pb.collection("tracked_products").getFullList()
+  ).map((product) => {
+    return product.id;
+  });
+
+  return tracked_products;
+}
