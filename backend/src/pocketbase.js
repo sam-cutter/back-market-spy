@@ -19,7 +19,7 @@ export async function get_tracked_products() {
   const tracked_products = (
     await pb.collection("tracked_products").getFullList()
   ).map((product) => {
-    return product.id;
+    return product.pb_uuid;
   });
 
   return tracked_products;
