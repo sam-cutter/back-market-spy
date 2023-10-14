@@ -18,8 +18,8 @@ export async function get_tracked_products() {
 
   const tracked_products = (
     await pb.collection("tracked_products").getFullList()
-  ).map((product) => {
-    return product.pb_uuid;
+  ).map((tracked_product_record) => {
+    return tracked_product_record.id, tracked_product_record.pb_uuid;
   });
 
   return tracked_products;
