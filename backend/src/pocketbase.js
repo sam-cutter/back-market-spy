@@ -43,6 +43,7 @@ export async function add_tracked_product(product_bm_uuid) {
 export async function add_product_snapshot(
   product_record_id,
   product_condition,
+  product_in_stock,
   product_price
 ) {
   const pb = await init_pocketbase();
