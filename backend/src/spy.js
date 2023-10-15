@@ -1,4 +1,4 @@
-import { get_product_price } from "./back_market.js";
+import { get_product_data } from "./back_market.js";
 import { add_product_snapshot } from "./pocketbase.js";
 
 export async function generate_product_snapshot(
@@ -10,7 +10,7 @@ export async function generate_product_snapshot(
     product_condition <= 12;
     product_condition++
   ) {
-    const product_price = await get_product_price(
+    const product_data = await get_product_data(
       product_bm_uuid,
       product_condition
     );
@@ -18,8 +18,8 @@ export async function generate_product_snapshot(
     await add_product_snapshot(
       product_record_id,
       product_condition,
-      true,
-      product_price
+      product_data.in_stock,
+      product_data.price
     );
   }
 }
