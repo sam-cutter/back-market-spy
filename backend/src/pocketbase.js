@@ -51,7 +51,7 @@ export async function add_product_snapshot(
   const product_snapshot_data = {
     product: product_record_id,
     condition: product_condition,
-    in_stock: true,
+    in_stock: product_in_stock,
     price_gbp: product_price,
   };
 
