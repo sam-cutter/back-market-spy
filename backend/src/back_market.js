@@ -105,9 +105,12 @@ export function extract_product_condition(product_url_string) {
 
   const product_url_hash = product_url_evaluation.hash;
 
+  // ---------------------------------------------------------------------------------- //
+  // If there is no hash, the default condition is Fair
   if (!product_url_hash) {
     return product_condition_options.Fair;
   }
+  // ---------------------------------------------------------------------------------- //
 
   const product_url_condition_match = product_url_hash.match(/#l=(\d+)/);
 
