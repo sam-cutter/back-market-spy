@@ -20,8 +20,11 @@ export function evaluate_product_bm_url_string(product_url_string) {
     // If the hostname of the input product URL is not a valid hostname, URL is invalid.
     if (!VALID_HOSTNAMES.includes(product_url.hostname)) {
       return {
-        valid: false,
-        reason: "Invalid product URL hostname.",
+        validity: {
+          valid: false,
+          reason: "Invalid product URL hostname.",
+        },
+        bm_uuid: "",
       };
     }
     // ---------------------------------------------------------------------------------- //
@@ -41,83 +44,47 @@ export function evaluate_product_bm_url_string(product_url_string) {
       product_url_path_segments[1] !== "p"
     ) {
       return {
-        valid: false,
-        reason: `Invalid product URL pattern.`,
+        validity: {
+          valid: false,
+          reason: `Invalid product URL pattern.`,
+        },
+        bm_uuid: "",
+      };
+    }
+    // ---------------------------------------------------------------------------------- //
+
+    const product_bm_uuid = product_url_path_segments[3];
+
+    const uuid_regex =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+    // ---------------------------------------------------------------------------------- //
+    // If the UUID does not match the common UUID regex, throw an error.
+    if (!uuid_regex.test(product_bm_uuid)) {
+      return {
+        validity: {
+          value: false,
+          reason: "Invalid product UUID.",
+        },
+        bm_uuid: "",
       };
     }
     // ---------------------------------------------------------------------------------- //
 
     return {
-      valid: true,
-      path_segments: product_url_path_segments,
-      hash: product_url.hash,
+      validity: {
+        value: true,
+        reason: "",
+      },
+      bm_uuid: product_bm_uuid,
     };
   } catch {
     return {
-      valid: false,
-      reason: "Unable to interpret product URL.",
+      validity: {
+        valid: false,
+        reason: "Unable to interpret product URL.",
+      },
     };
-  }
-}
-
-export function extract_product_bm_uuid(product_url_string) {
-  const product_url_evaluation =
-    evaluate_product_bm_url_string(product_url_string);
-
-  // ---------------------------------------------------------------------------------- //
-  // If the evaluation of the product URL returns that the URL is invalid, throw an error.
-  if (product_url_evaluation.valid === false) {
-    throw new UserInputError(
-      `Invalid product URL: ${product_url_evaluation.reason}`
-    );
-  }
-  // ---------------------------------------------------------------------------------- //
-
-  const product_url_path_segments = product_url_evaluation.path_segments;
-
-  const product_bm_uuid = product_url_path_segments[3];
-
-  const uuid_regex =
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-
-  // ---------------------------------------------------------------------------------- //
-  // If the UUID does not match the common UUID regex, throw an error.
-  if (!uuid_regex.test(product_bm_uuid)) {
-    throw new UserInputError("Invalid product URL: Invalid product UUID.");
-  }
-  // ---------------------------------------------------------------------------------- //
-
-  return product_bm_uuid;
-}
-
-export function extract_product_condition(product_url_string) {
-  const product_url_evaluation =
-    evaluate_product_bm_url_string(product_url_string);
-
-  // ---------------------------------------------------------------------------------- //
-  // If the evaluation of the product URL returns that the URL is invalid, throw an error.
-  if (product_url_evaluation.valid === false) {
-    throw new UserInputError(
-      `Invalid product URL: ${product_url_evaluation.reason}`
-    );
-  }
-  // ---------------------------------------------------------------------------------- //
-
-  const product_url_hash = product_url_evaluation.hash;
-
-  // ---------------------------------------------------------------------------------- //
-  // If there is no hash, the default condition is Fair
-  if (!product_url_hash) {
-    return product_condition_options.Fair;
-  }
-  // ---------------------------------------------------------------------------------- //
-
-  const product_url_condition_match = product_url_hash.match(/#l=(\d+)/);
-
-  if (product_url_condition_match && product_url_condition_match[1]) {
-    return parseInt(product_url_condition_match[1]);
-  } else {
-    return product_condition_options.Fair;
   }
 }
 
