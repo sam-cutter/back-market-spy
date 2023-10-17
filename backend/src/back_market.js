@@ -1,5 +1,3 @@
-import { UserInputError } from "./errors.js";
-
 export const product_condition_options = {
   Fair: 12,
   Good: 11,
