@@ -87,55 +87,73 @@ export function evaluate_product_bm_url_string(product_url_string) {
   }
 }
 
-export async function get_product_data(product_bm_uuid, grade) {
+export async function get_product_data(product_bm_uuid) {
   const product_request_url = `https://www.backmarket.co.uk/bm/product/${product_bm_uuid}/pickers`;
 
-  const product_request_headers = new Headers({
-    "Accept-Language": "en-gb",
-  });
-
-  const product_request_options = {
-    method: "GET",
-    headers: product_request_headers,
-  };
-
   try {
-    const product_request_response = await fetch(
-      product_request_url,
-      product_request_options
-    );
+    const product_request_response = await fetch(product_request_url, {
+      method: "GET",
+      headers: { "Accept-Language": "en-gb" },
+    });
 
     if (!product_request_response.ok) {
       throw new Error(
-        `Response status code was not 200: ${product_request_response.status}.`
+        `Back Market API returned a non-200 response code: ${product_request_response.status}`
       );
     }
 
     const product_data = await product_request_response.json();
-
     const product_grade_picker = product_data.pickers.find(
-      (picker) => picker.id === "grades"
+      (picker) => picker.id && picker.id === "grades"
     );
 
     if (!product_grade_picker) {
-      throw new Error("grade picker not found within pickers array.");
+      throw new Error("Grade picker not found within product pickers.");
     }
 
-    const product_item = product_grade_picker.items.find(
-      (item) => item.grade.value === grade
+    const product_items = product_grade_picker.items.map(
+      (product_item, index) => {
+        const grade = 12 - index;
+        const price_gbp = product_item.available
+          ? product_item.price.amount
+          : undefined;
+        return {
+          grade: grade,
+          available: product_item.available,
+          price_gbp: price_gbp,
+        };
+      }
     );
 
-    if (product_item) {
-      const product_data = {
-        slug: product_item.link.params.slugV2,
-        available: product_item.available,
-        price: product_item.price.amount,
-      };
-      return product_data;
-    } else {
-      throw new Error(`Product price not found.`);
-    }
+    const product_item_with_slug = product_items.find(
+      (item) => item.available && item.link
+    );
+    const product_slug = product_item_with_slug
+      ? product_item_with_slug.link.params.slugV2
+      : undefined;
+
+    return {
+      success: {
+        value: true,
+        reason: "",
+      },
+      data: {
+        slug: product_slug,
+        items: product_items,
+      },
+    };
   } catch (error) {
     console.error(error);
+
+    return {
+      success: {
+        value: false,
+        reason: error.message,
+      },
+      data: {
+        slug: "",
+        items: [],
+      },
+    };
   }
 }
