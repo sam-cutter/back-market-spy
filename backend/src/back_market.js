@@ -128,7 +128,7 @@ export async function get_product_data(product_bm_uuid, grade) {
     if (product_item) {
       const product_data = {
         slug: product_item.link.params.slugV2,
-        in_stock: product_item.available,
+        available: product_item.available,
         price: product_item.price.amount,
       };
       return product_data;

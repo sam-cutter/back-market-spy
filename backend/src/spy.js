@@ -11,7 +11,7 @@ export async function generate_product_snapshot(
     await add_product_snapshot(
       product_record_id,
       product_grade,
-      product_data.in_stock,
+      product_data.available,
       product_data.price
     );
   }
