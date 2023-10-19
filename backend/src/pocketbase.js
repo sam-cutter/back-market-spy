@@ -42,7 +42,7 @@ export async function add_tracked_product(product_bm_uuid) {
 
 export async function add_product_snapshot(
   product_record_id,
-  product_condition,
+  product_grade,
   product_in_stock,
   product_price
 ) {
@@ -50,7 +50,7 @@ export async function add_product_snapshot(
 
   const product_snapshot_data = {
     product: product_record_id,
-    condition: product_condition,
+    grade: product_grade,
     in_stock: product_in_stock,
     price_gbp: product_price,
   };

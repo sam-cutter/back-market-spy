@@ -1,4 +1,4 @@
-export const product_condition_options = {
+export const product_grade_options = {
   Fair: 12,
   Good: 11,
   Excellent: 10,
@@ -87,7 +87,7 @@ export function evaluate_product_bm_url_string(product_url_string) {
   }
 }
 
-export async function get_product_data(product_bm_uuid, condition) {
+export async function get_product_data(product_bm_uuid, grade) {
   const product_request_url = `https://www.backmarket.co.uk/bm/product/${product_bm_uuid}/pickers`;
 
   const product_request_headers = new Headers({
@@ -118,11 +118,11 @@ export async function get_product_data(product_bm_uuid, condition) {
     );
 
     if (!product_grade_picker) {
-      throw new Error("Condition picker not found within pickers array.");
+      throw new Error("grade picker not found within pickers array.");
     }
 
     const product_item = product_grade_picker.items.find(
-      (item) => item.grade.value === condition
+      (item) => item.grade.value === grade
     );
 
     if (product_item) {
