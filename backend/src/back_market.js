@@ -82,6 +82,7 @@ export function evaluate_product_bm_url_string(product_url_string) {
         valid: false,
         reason: "Unable to interpret product URL.",
       },
+      bm_uuid: "",
     };
   }
 }
