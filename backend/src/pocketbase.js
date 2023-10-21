@@ -3,14 +3,30 @@ import "dotenv/config";
 import { get_product_data } from "./back_market.js";
 
 export async function init_pocketbase() {
-  const pb = new PocketBase("http://127.0.0.1:8090");
+  try {
+    const pb = new PocketBase("http://127.0.0.1:8090");
 
-  await pb.admins.authWithPassword(
-    process.env.POCKETBASE_ADMIN_EMAIL,
-    process.env.POCKETBASE_ADMIN_PASSWORD
-  );
+    await pb.admins.authWithPassword(
+      process.env.POCKETBASE_ADMIN_EMAIL,
+      process.env.POCKETBASE_ADMIN_PASSWORD
+    );
 
-  return pb;
+    return {
+      success: {
+        value: true,
+        reason: "",
+      },
+      pocketbase: pb,
+    };
+  } catch (error) {
+    return {
+      success: {
+        value: false,
+        reason: error.message,
+      },
+      pocketbase: undefined,
+    };
+  }
 }
 
 export async function get_tracked_products() {
