@@ -18,8 +18,8 @@ export function evaluate_product_bm_url_string(product_url_string) {
     // If the hostname of the input product URL is not a valid hostname, URL is invalid.
     if (!VALID_HOSTNAMES.includes(product_url.hostname)) {
       return {
-        validity: {
-          valid: false,
+        valid: {
+          value: false,
           reason: "Invalid product URL hostname.",
         },
         bm_uuid: "",
@@ -42,8 +42,8 @@ export function evaluate_product_bm_url_string(product_url_string) {
       product_url_path_segments[1] !== "p"
     ) {
       return {
-        validity: {
-          valid: false,
+        valid: {
+          value: false,
           reason: `Invalid product URL pattern.`,
         },
         bm_uuid: "",
@@ -60,7 +60,7 @@ export function evaluate_product_bm_url_string(product_url_string) {
     // If the UUID does not match the common UUID regex, throw an error.
     if (!uuid_regex.test(product_bm_uuid)) {
       return {
-        validity: {
+        valid: {
           value: false,
           reason: "Invalid product UUID.",
         },
@@ -70,7 +70,7 @@ export function evaluate_product_bm_url_string(product_url_string) {
     // ---------------------------------------------------------------------------------- //
 
     return {
-      validity: {
+      valid: {
         value: true,
         reason: "",
       },
@@ -78,8 +78,8 @@ export function evaluate_product_bm_url_string(product_url_string) {
     };
   } catch {
     return {
-      validity: {
-        valid: false,
+      valid: {
+        value: false,
         reason: "Unable to interpret product URL.",
       },
       bm_uuid: "",
