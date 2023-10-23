@@ -4,7 +4,7 @@ export const product_grade_options = {
   Excellent: 10,
 };
 
-export function evaluate_product_bm_url_string(product_url_string) {
+export function evaluate_product_bm_url(product_url_string) {
   const VALID_HOSTNAMES = [
     "www.backmarket.co.uk",
     "www.backmarket.fr",
@@ -159,5 +159,3 @@ export async function get_product_data(product_bm_uuid) {
     };
   }
 }
-
-console.log(await get_product_data("0b162fa7-1929-4e6c-9ee2-39921d79a843"));

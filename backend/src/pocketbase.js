@@ -1,6 +1,5 @@
 import PocketBase from "pocketbase";
 import "dotenv/config";
-import { get_product_data } from "./back_market.js";
 
 export async function init_pocketbase() {
   try {
@@ -30,23 +29,22 @@ export async function init_pocketbase() {
 }
 
 export async function get_tracked_products() {
-  const pb = await init_pocketbase();
+  const pb = (await init_pocketbase()).pocketbase;
 
   const tracked_products = (
     await pb.collection("tracked_products").getFullList()
   ).map((product_record) => {
-    return { record_id: product_record.id, pb_uuid: product_record.pb_uuid };
+    return { record_id: product_record.id, bm_uuid: product_record.bm_uuid };
   });
 
   return tracked_products;
 }
 
 export async function add_tracked_product(product_bm_uuid) {
-  const pb = await init_pocketbase();
+  const pb = (await init_pocketbase()).pocketbase;
 
   const product_data = {
-    pb_uuid: product_bm_uuid,
-    slug: await get_product_data(product_bm_uuid, 12),
+    bm_uuid: product_bm_uuid,
   };
 
   const tracked_product_record = await pb
@@ -62,7 +60,7 @@ export async function add_product_snapshot(
   product_available,
   product_price
 ) {
-  const pb = await init_pocketbase();
+  const pb = (await init_pocketbase()).pocketbase;
 
   const product_snapshot_data = {
     product: product_record_id,
@@ -76,4 +74,16 @@ export async function add_product_snapshot(
     .create(product_snapshot_data);
 
   return product_snapshot_record.id;
+}
+
+export async function is_product_tracked(product_bm_uuid) {
+  const pb = (await init_pocketbase()).pocketbase;
+
+  return (
+    (
+      await pb.collection("tracked_products").getFullList({
+        filter: `bm_uuid = "${product_bm_uuid}"`,
+      })
+    ).length > 0
+  );
 }
