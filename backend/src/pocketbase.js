@@ -2,34 +2,18 @@ import PocketBase from "pocketbase";
 import "dotenv/config";
 
 export async function init_pocketbase() {
-  try {
-    const pb = new PocketBase("http://127.0.0.1:8090");
+  const pb = new PocketBase("http://127.0.0.1:8090");
 
-    await pb.admins.authWithPassword(
-      process.env.POCKETBASE_ADMIN_EMAIL,
-      process.env.POCKETBASE_ADMIN_PASSWORD
-    );
+  await pb.admins.authWithPassword(
+    process.env.POCKETBASE_ADMIN_EMAIL,
+    process.env.POCKETBASE_ADMIN_PASSWORD
+  );
 
-    return {
-      success: {
-        value: true,
-        reason: "",
-      },
-      pocketbase: pb,
-    };
-  } catch (error) {
-    return {
-      success: {
-        value: false,
-        reason: error.message,
-      },
-      pocketbase: undefined,
-    };
-  }
+  return pb;
 }
 
 export async function get_tracked_products() {
-  const pb = (await init_pocketbase()).pocketbase;
+  const pb = await init_pocketbase();
 
   const tracked_products = (
     await pb.collection("tracked_products").getFullList()
@@ -41,7 +25,7 @@ export async function get_tracked_products() {
 }
 
 export async function add_tracked_product(product_bm_uuid) {
-  const pb = (await init_pocketbase()).pocketbase;
+  const pb = await init_pocketbase();
 
   const product_data = {
     bm_uuid: product_bm_uuid,
@@ -60,7 +44,7 @@ export async function add_product_snapshot(
   product_available,
   product_price
 ) {
-  const pb = (await init_pocketbase()).pocketbase;
+  const pb = await init_pocketbase();
 
   const product_snapshot_data = {
     product: product_record_id,
@@ -77,13 +61,35 @@ export async function add_product_snapshot(
 }
 
 export async function is_product_tracked(product_bm_uuid) {
-  const pb = (await init_pocketbase()).pocketbase;
+  try {
+    const pb = await init_pocketbase();
 
-  return (
-    (
-      await pb.collection("tracked_products").getFullList({
+    const tracked_products_matching_bm_uuid = await pb
+      .collection("tracked_products")
+      .getFullList({
         filter: `bm_uuid = "${product_bm_uuid}"`,
-      })
-    ).length > 0
-  );
+      });
+
+    const product_is_tracked = tracked_products_matching_bm_uuid.length > 0;
+
+    return {
+      success: {
+        value: true,
+        reason: "",
+      },
+      data: {
+        tracked: product_is_tracked,
+      },
+    };
+  } catch (error) {
+    return {
+      success: {
+        value: false,
+        reason: error.message,
+      },
+      data: {
+        tracked: undefined,
+      },
+    };
+  }
 }

@@ -36,7 +36,8 @@ export async function track_product(product_bm_url) {
 
   const product_bm_uuid = product_bm_url_evaluation.bm_uuid;
 
-  const product_is_tracked = await is_product_tracked(product_bm_uuid);
+  const product_is_tracked = (await is_product_tracked(product_bm_uuid)).data
+    .tracked;
 
   if (product_is_tracked) {
     return {
