@@ -22,6 +22,9 @@ export async function generate_product_snapshot(
 }
 
 export async function track_product(product_bm_url) {
+  // ---------------------------------------------------------------------------------- //
+  // Evaluate the Back Market product URL. If the URL is invalid,
+  // product tracking is unsuccessful.
   const product_bm_url_evaluation = evaluate_product_bm_url(product_bm_url);
 
   if (!product_bm_url_evaluation.valid.value) {
@@ -30,16 +33,30 @@ export async function track_product(product_bm_url) {
         value: false,
         reason: product_bm_url_evaluation.valid.reason,
       },
-      product_bm_uuid: "",
+      product_bm_uuid: undefined,
     };
   }
+  // ---------------------------------------------------------------------------------- //
 
   const product_bm_uuid = product_bm_url_evaluation.bm_uuid;
 
-  const product_is_tracked = (await is_product_tracked(product_bm_uuid)).data
-    .tracked;
+  // ---------------------------------------------------------------------------------- //
+  // Check whether the product is already being tracked in the tracked_products collection.
+  // If the check was unsuccessful, product tracking is unsuccessful. If the check returns
+  // that the product is already being tracked, product tracking is successful
+  const product_tracked_check = await is_product_tracked(product_bm_uuid);
 
-  if (product_is_tracked) {
+  if (!product_tracked_check.success.value) {
+    return {
+      success: {
+        value: false,
+        reason: product_tracked_check.success.reason,
+      },
+      product_bm_uuid: undefined,
+    };
+  }
+
+  if (product_tracked_check.data.tracked) {
     return {
       success: {
         value: true,
@@ -48,6 +65,7 @@ export async function track_product(product_bm_url) {
       product_bm_uuid: product_bm_uuid,
     };
   }
+  // ---------------------------------------------------------------------------------- //
 
   const product_record_id = await add_tracked_product(product_bm_uuid);
 
