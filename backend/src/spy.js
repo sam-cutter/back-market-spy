@@ -9,15 +9,46 @@ export async function generate_product_snapshot(
   product_bm_uuid,
   product_record_id
 ) {
-  const product_data = (await get_product_data(product_bm_uuid)).data.items;
+  try {
+    const product_data = await get_product_data(product_bm_uuid);
 
-  for (const product of product_data) {
-    await add_product_snapshot(
-      product_record_id,
-      product.grade,
-      product.available,
-      product.price_gbp
-    );
+    if (!product_data.success.value) {
+      return {
+        success: {
+          value: false,
+          reason: product_data.success.reason,
+        },
+      };
+    }
+
+    for (const product of product_data.data.items) {
+      const product_snapshot = await add_product_snapshot(
+        product_record_id,
+        product.grade,
+        product.available,
+        product.price_gbp
+      );
+
+      if (!product_snapshot.success.value) {
+        return {
+          success: {
+            value: false,
+            reason: product_snapshot.success.reason,
+          },
+        };
+      }
+    }
+
+    return {
+      success: { value: true, reason: "" },
+    };
+  } catch (error) {
+    return {
+      success: {
+        value: false,
+        reason: error.message,
+      },
+    };
   }
 }
 
@@ -84,9 +115,31 @@ export async function track_product(product_bm_url) {
   const product_record_id = tracked_product_add_result.data.record_id;
   // ---------------------------------------------------------------------------------- //
 
-  await generate_product_snapshot(product_bm_uuid, product_record_id);
+  // ---------------------------------------------------------------------------------- //
+  // Generate an intial product snapshot for the product
+  const product_snapshot_generation_result = await generate_product_snapshot(
+    product_bm_uuid,
+    product_record_id
+  );
 
-  return product_bm_uuid;
+  if (!product_snapshot_generation_result.success.value) {
+    return {
+      success: {
+        value: false,
+        reason: product_snapshot_generation_result.success.reason,
+      },
+      product_bm_uuid: undefined,
+    };
+  }
+  // ---------------------------------------------------------------------------------- //
+
+  return {
+    success: {
+      value: true,
+      reason: "",
+    },
+    product_bm_uuid: product_bm_uuid,
+  };
 }
 
 console.log(
