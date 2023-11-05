@@ -13,15 +13,35 @@ export async function init_pocketbase() {
 }
 
 export async function get_tracked_products() {
-  const pb = await init_pocketbase();
+  try {
+    const pb = await init_pocketbase();
 
-  const tracked_products = (
-    await pb.collection("tracked_products").getFullList()
-  ).map((product_record) => {
-    return { record_id: product_record.id, bm_uuid: product_record.bm_uuid };
-  });
+    const tracked_products = (
+      await pb.collection("tracked_products").getFullList()
+    ).map((product_record) => {
+      return { record_id: product_record.id, bm_uuid: product_record.bm_uuid };
+    });
 
-  return tracked_products;
+    return {
+      success: {
+        value: true,
+        reason: "",
+      },
+      data: {
+        items: tracked_products,
+      },
+    };
+  } catch (error) {
+    return {
+      success: {
+        value: false,
+        reason: error.message,
+      },
+      data: {
+        items: undefined,
+      },
+    };
+  }
 }
 
 export async function add_tracked_product(product_bm_uuid) {
