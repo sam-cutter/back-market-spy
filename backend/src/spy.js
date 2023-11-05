@@ -141,9 +141,3 @@ export async function track_product(product_bm_url) {
     product_bm_uuid: product_bm_uuid,
   };
 }
-
-console.log(
-  await track_product(
-    "https://www.backmarket.co.uk/en-gb/p/ipad-102-7th-gen-2019-hdd-32-gb-space-gray-wifi/315cdbc4-ffce-4a7a-bfa9-6a3771e2c3bf#l=11"
-  )
-);
