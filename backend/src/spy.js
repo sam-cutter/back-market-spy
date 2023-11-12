@@ -3,6 +3,7 @@ import {
   add_product_snapshot,
   is_product_tracked,
   add_tracked_product,
+  get_tracked_products,
 } from "./pocketbase.js";
 
 export async function generate_product_snapshot(
@@ -140,4 +141,32 @@ export async function track_product(product_bm_url) {
     },
     product_bm_uuid: product_bm_uuid,
   };
+}
+
+export async function snapshot_all_products() {
+  try {
+    const tracked_products_result = await get_tracked_products();
+
+    if (!tracked_products_result.success.value) {
+      return {
+        success: {
+          value: false,
+          reason: tracked_products_result.success.reason,
+        },
+      };
+    }
+
+    const tracked_products = tracked_products_result.data.items;
+
+    for (const product of tracked_products) {
+      await generate_product_snapshot(product.bm_uuid, product.record_id);
+    }
+  } catch (error) {
+    return {
+      success: {
+        value: false,
+        reason: error.message,
+      },
+    };
+  }
 }
