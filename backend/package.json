@@ -19,6 +19,7 @@
   "homepage": "https://github.com/sam-cutter/back-market-spy#readme",
   "dependencies": {
     "dotenv": "^16.3.1",
+    "node-cron": "^3.0.3",
     "pocketbase": "^0.18.2"
   }
 }
