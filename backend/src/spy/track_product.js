@@ -1,59 +1,9 @@
-import { get_product_data, evaluate_product_bm_url } from "./back_market.js";
-import {
-  add_product_snapshot,
-  is_product_tracked,
-  add_tracked_product,
-  get_tracked_products,
-} from "./pocketbase.js";
+import evaluate_product_bm_url from "../back_market/evaluate_product_bm_url.js";
+import is_product_tracked from "../pocketbase/is_product_tracked.js";
+import add_tracked_product from "../pocketbase/add_tracked_product.js";
+import generate_product_snapshot from "./generate_product_snapshot.js";
 
-export async function generate_product_snapshot(
-  product_bm_uuid,
-  product_record_id
-) {
-  try {
-    const product_data = await get_product_data(product_bm_uuid);
-
-    if (!product_data.success.value) {
-      return {
-        success: {
-          value: false,
-          reason: product_data.success.reason,
-        },
-      };
-    }
-
-    for (const product of product_data.data.items) {
-      const product_snapshot = await add_product_snapshot(
-        product_record_id,
-        product.grade,
-        product.available,
-        product.price_gbp
-      );
-
-      if (!product_snapshot.success.value) {
-        return {
-          success: {
-            value: false,
-            reason: product_snapshot.success.reason,
-          },
-        };
-      }
-    }
-
-    return {
-      success: { value: true, reason: "" },
-    };
-  } catch (error) {
-    return {
-      success: {
-        value: false,
-        reason: error.message,
-      },
-    };
-  }
-}
-
-export async function track_product(product_bm_url) {
+export default async function track_product(product_bm_url) {
   // ---------------------------------------------------------------------------------- //
   // Evaluate the Back Market product URL. If the URL is invalid,
   // product tracking is unsuccessful.
@@ -141,32 +91,4 @@ export async function track_product(product_bm_url) {
     },
     product_bm_uuid: product_bm_uuid,
   };
-}
-
-export async function snapshot_all_products() {
-  try {
-    const tracked_products_result = await get_tracked_products();
-
-    if (!tracked_products_result.success.value) {
-      return {
-        success: {
-          value: false,
-          reason: tracked_products_result.success.reason,
-        },
-      };
-    }
-
-    const tracked_products = tracked_products_result.data.items;
-
-    for (const product of tracked_products) {
-      await generate_product_snapshot(product.bm_uuid, product.record_id);
-    }
-  } catch (error) {
-    return {
-      success: {
-        value: false,
-        reason: error.message,
-      },
-    };
-  }
 }
