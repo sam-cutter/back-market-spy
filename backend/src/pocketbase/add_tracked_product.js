@@ -1,11 +1,15 @@
 import init_pocketbase from "./init_pocketbase.js";
 
-export default async function add_tracked_product(product_bm_uuid) {
+export default async function add_tracked_product(
+  product_bm_uuid,
+  product_name
+) {
   try {
     const pb = await init_pocketbase();
 
     const product_data = {
       bm_uuid: product_bm_uuid,
+      name: product_name,
     };
 
     const tracked_product_record = await pb

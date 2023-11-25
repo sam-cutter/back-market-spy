@@ -15,3 +15,9 @@ app.get("/api/track_product/:product_bm_url", async (request, response) => {
 
   response.json(product_tracking_result);
 });
+
+app.get("/api/get_product/:product_bm_uuid", async (request, response) => {
+  const product_bm_uuid = request.params.product_bm_uuid;
+
+  response.json();
+});

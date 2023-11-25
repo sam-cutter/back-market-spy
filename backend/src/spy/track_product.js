@@ -2,6 +2,7 @@ import evaluate_product_bm_url from "../back_market/evaluate_product_bm_url.js";
 import is_product_tracked from "../pocketbase/is_product_tracked.js";
 import add_tracked_product from "../pocketbase/add_tracked_product.js";
 import generate_product_snapshot from "./generate_product_snapshot.js";
+import get_product_name from "../back_market/get_product_name.js";
 
 export default async function track_product(product_bm_url) {
   // ---------------------------------------------------------------------------------- //
@@ -50,8 +51,26 @@ export default async function track_product(product_bm_url) {
   // ---------------------------------------------------------------------------------- //
 
   // ---------------------------------------------------------------------------------- //
+  const product_name_get = await get_product_name(product_bm_uuid);
+
+  if (!product_name_get.success.value) {
+    return {
+      success: {
+        value: false,
+        reason: "Unable to get product name.",
+      },
+    };
+  }
+
+  const product_name = product_name_get.data.name;
+  // ---------------------------------------------------------------------------------- //
+
+  // ---------------------------------------------------------------------------------- //
   // Attempt to add the product to the tracked_products table.
-  const tracked_product_add_result = await add_tracked_product(product_bm_uuid);
+  const tracked_product_add_result = await add_tracked_product(
+    product_bm_uuid,
+    product_name
+  );
 
   if (!tracked_product_add_result.success.value) {
     return {
