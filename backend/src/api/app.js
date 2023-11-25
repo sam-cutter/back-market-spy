@@ -9,7 +9,7 @@ app.listen(port, () => {
 });
 
 app.get("/api/track_product/:product_bm_url", async (request, response) => {
-  const product_bm_url = request.params.product_bm_url;
+  const product_bm_url = decodeURIComponent(request.params.product_bm_url);
 
   const product_tracking_result = await track_product(product_bm_url);
 
