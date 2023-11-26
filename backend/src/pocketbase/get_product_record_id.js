@@ -31,7 +31,3 @@ export default async function get_product_record_id(product_bm_uuid) {
     };
   }
 }
-
-console.log(
-  await get_product_record_id("b5ebc79d-0304-41a6-b1ae-d2a487afa11f")
-);
